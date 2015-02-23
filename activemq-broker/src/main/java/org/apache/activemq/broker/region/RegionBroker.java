@@ -59,11 +59,7 @@ import org.apache.activemq.store.PListStore;
 import org.apache.activemq.thread.Scheduler;
 import org.apache.activemq.thread.TaskRunnerFactory;
 import org.apache.activemq.usage.SystemUsage;
-import org.apache.activemq.util.BrokerSupport;
-import org.apache.activemq.util.IdGenerator;
-import org.apache.activemq.util.InetAddressUtil;
-import org.apache.activemq.util.LongSequenceGenerator;
-import org.apache.activemq.util.ServiceStopper;
+import org.apache.activemq.util.*;
 import org.apache.activemq.util.locking.ChunkedGranularReentrantReadWriteLock;
 import org.apache.activemq.util.locking.GranularReentrantReadWriteLock;
 import org.slf4j.Logger;
@@ -838,8 +834,9 @@ public class RegionBroker extends EmptyBroker {
 
     protected void purgeInactiveDestinations() {
 
+        Logger log = LOG;
+        StopWatch purgeStopWatch = new StopWatch();
         subscriptionPurgeLock.writeLock().lock();
-
         try {
             List<Destination> list = new ArrayList<>();
             Map<ActiveMQDestination, Destination> map = getDestinationMap();
@@ -864,7 +861,6 @@ public class RegionBroker extends EmptyBroker {
                 context.setBroker( this );
 
                 for (Destination dest : list) {
-                    Logger log = LOG;
                     if (dest instanceof BaseDestination) {
                         log = ( (BaseDestination) dest ).getLog();
                     }
@@ -874,7 +870,9 @@ public class RegionBroker extends EmptyBroker {
                         //(double check idiom) check that the destination can still be GCd
                         if (dest.canGC()) {
                             log.info( "{} Inactive for longer than {} ms - removing ...", dest.getName(), dest.getInactiveTimoutBeforeGC() );
+                            StopWatch purgeDestinationStopWatch = new StopWatch();
                             getRoot().removeDestination( context, dest.getActiveMQDestination(), isAllowTempAutoCreationOnSend() ? 1 : 0 );
+                            log.info( "{} Inactive for longer than {} ms - removed in {} ms ...done", dest.getName(), dest.getInactiveTimoutBeforeGC(), purgeDestinationStopWatch.stop() );
                         }
                     } catch (Exception e) {
                         LOG.error( "Failed to remove inactive destination {}", dest, e );
@@ -885,6 +883,7 @@ public class RegionBroker extends EmptyBroker {
             }
         } finally {
             subscriptionPurgeLock.writeLock().unlock();
+            log.info( "Inactive destination purge took {} ms", purgeStopWatch.stop() );
         }
     }
 
