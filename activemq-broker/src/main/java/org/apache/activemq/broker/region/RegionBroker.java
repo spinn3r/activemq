@@ -101,7 +101,7 @@ public class RegionBroker extends EmptyBroker {
     private boolean allowTempAutoCreationOnSend;
 
     private final ReentrantReadWriteLock subscriptionPurgeLock = new ReentrantReadWriteLock();
-    private final GranularReentrantReadWriteLock<ActiveMQDestination> inactiveDestinationsPurgeLock = new ChunkedGranularReentrantReadWriteLock<>();
+    private final GranularReentrantReadWriteLock<ActiveMQDestination> inactiveDestinationsPurgeLock = new ChunkedGranularReentrantReadWriteLock<ActiveMQDestination>();
     private final Runnable purgeInactiveDestinationsTask = new Runnable() {
         @Override
         public void run() {
@@ -839,7 +839,7 @@ public class RegionBroker extends EmptyBroker {
         subscriptionPurgeLock.writeLock().lock();
         int nrDestinationsPurged = 0;
         try {
-            List<Destination> list = new ArrayList<>();
+            List<Destination> list = new ArrayList<Destination>();
             Map<ActiveMQDestination, Destination> map = getDestinationMap();
             if (isAllowTempAutoCreationOnSend()) {
                 map.putAll( tempQueueRegion.getDestinationMap() );
