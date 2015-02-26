@@ -227,7 +227,7 @@
 
     <repository>
       <id>ssh-repository</id>
-      <url>sftp://util0017.wdc.sl.spinn3r.com/var/www/maven-repo/private</url>
+      <url>sftp://util0017.wdc.sl.spinn3r.com/var/www/maven-repo/public</url>
     </repository>
 
   </distributionManagement>
