@@ -136,8 +136,8 @@
     <felix-configadmin-version>1.4.0</felix-configadmin-version>
 
     <site-repo-url>scpexe://people.apache.org/www/activemq.apache.org/maven/</site-repo-url>
-    <source-version>1.6</source-version>
-    <target-version>1.6</target-version>
+    <source-version>1.7</source-version>
+    <target-version>1.7</target-version>
     <javase-javadoc-url>http://download.oracle.com/javase/6/docs/api/</javase-javadoc-url>
     <javaee-javadoc-url>http://download.oracle.com/javaee/6/api/</javaee-javadoc-url>
     <slf4j-javadoc-url>http://www.slf4j.org/apidocs/</slf4j-javadoc-url>
