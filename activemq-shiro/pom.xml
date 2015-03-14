@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-parent</artifactId>
-        <version>5.10.2-spinn3r-2</version>
+        <version>5.10.2-spinn3r-5</version>
     </parent>
 
     <artifactId>activemq-shiro</artifactId>
