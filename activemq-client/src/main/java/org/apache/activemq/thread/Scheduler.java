@@ -30,23 +30,27 @@ public final class Scheduler extends ServiceSupport {
 
     private final String name;
     private Timer timer;
-    private final HashMap<Runnable, TimerTask> timerTasks = new HashMap<Runnable, TimerTask>();
+    private final HashMap<Runnable, SchedulerTimerTask> timerTasks = new HashMap<Runnable, SchedulerTimerTask>();
 
     public Scheduler(String name) {
         this.name = name;
     }
 
     public synchronized void executePeriodically(final Runnable task, long period) {
-        TimerTask timerTask = new SchedulerTimerTask(task);
+        SchedulerTimerTask timerTask = new SchedulerTimerTask(task);
         timer.schedule(timerTask, period, period);
         timerTasks.put(task, timerTask);
     }
 
     public synchronized void cancel(Runnable task) {
-        TimerTask ticket = timerTasks.remove(task);
+        SchedulerTimerTask ticket = timerTasks.remove(task);
         if (ticket != null) {
             ticket.cancel();
-            timer.purge(); // remove cancelled TimerTasks
+            // now clear the ticket so we can remove the reference to the
+            // underlying task.  This is necessary to allow GC to take effect.
+            // Otherwise the Runnable will still have a reference and hog
+            // memory.
+            ticket.clear();
         }
     }
 
