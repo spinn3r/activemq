@@ -7,7 +7,7 @@ public class ChunkedGranularReentrantReadWriteLockTest extends TestCase {
     public void testComputeId() throws Exception {
 
         ChunkedGranularReentrantReadWriteLock<Integer> granularReentrantReadWriteLock =
-          new ChunkedGranularReentrantReadWriteLock<>();
+          new ChunkedGranularReentrantReadWriteLock<Integer>();
 
         assertEquals( 0, granularReentrantReadWriteLock.computeId( 0 ) );
         assertEquals( 500, granularReentrantReadWriteLock.computeId( 500 ) );
@@ -22,7 +22,7 @@ public class ChunkedGranularReentrantReadWriteLockTest extends TestCase {
     public void testLockAcquireAndRelease() throws Exception {
 
         ChunkedGranularReentrantReadWriteLock<Integer> granularReentrantReadWriteLock =
-          new ChunkedGranularReentrantReadWriteLock<>();
+          new ChunkedGranularReentrantReadWriteLock<Integer>();
 
         granularReentrantReadWriteLock.readLock( 0 ).lock();
 

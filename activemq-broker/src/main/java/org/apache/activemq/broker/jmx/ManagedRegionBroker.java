@@ -17,13 +17,8 @@
 package org.apache.activemq.broker.jmx;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
@@ -100,7 +95,7 @@ public class ManagedRegionBroker extends RegionBroker {
     private final Map<ObjectName, ProducerView> dynamicDestinationProducers = new ConcurrentHashMap<ObjectName, ProducerView>();
     private final Map<SubscriptionKey, ObjectName> subscriptionKeys = new ConcurrentHashMap<SubscriptionKey, ObjectName>();
     private final Map<Subscription, ObjectName> subscriptionMap = new ConcurrentHashMap<Subscription, ObjectName>();
-    private final Set<ObjectName> registeredMBeans = new CopyOnWriteArraySet<ObjectName>();
+    private final Set<ObjectName> registeredMBeans = Collections.newSetFromMap( new ConcurrentHashMap<ObjectName,Boolean>());
     /* This is the first broker in the broker interceptor chain. */
     private Broker contextBroker;
 
