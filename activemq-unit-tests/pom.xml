@@ -30,7 +30,7 @@
   <description>The ActiveMQ Message Broker and Client Unit Tests</description>
 
   <properties>
-    <surefire.argLine>-Xmx512M -Djava.awt.headless=true</surefire.argLine>
+    <surefire.argLine>-Xmx2048M -Xms2048M -Djava.awt.headless=true</surefire.argLine>
   </properties>
 
   <dependencies>
