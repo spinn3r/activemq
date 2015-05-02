@@ -16,9 +16,7 @@
  */
 package org.apache.activemq.management;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.management.j2ee.statistics.CountStatistic;
 
@@ -30,7 +28,7 @@ import javax.management.j2ee.statistics.CountStatistic;
 public class PollCountStatisticImpl extends StatisticImpl implements CountStatistic {
 
     private PollCountStatisticImpl parent;
-    private List<PollCountStatisticImpl> children;
+    private Set<PollCountStatisticImpl> children;
 
     public PollCountStatisticImpl(PollCountStatisticImpl parent, String name, String description) {
         this(name, description);
@@ -67,7 +65,7 @@ public class PollCountStatisticImpl extends StatisticImpl implements CountStatis
 
     private synchronized void addChild(PollCountStatisticImpl child) {
         if (children == null) {
-            children = new ArrayList<PollCountStatisticImpl>();
+            children = new HashSet<PollCountStatisticImpl>();
         }
         children.add(child);
     }

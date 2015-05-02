@@ -16,8 +16,11 @@
  */
 package org.apache.activemq.usage;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +54,7 @@ public abstract class Usage<T extends Usage> implements Service {
     private final List<UsageListener> listeners = new CopyOnWriteArrayList<UsageListener>();
     private final boolean debug = LOG.isDebugEnabled();
     private float usagePortion = 1.0f;
-    private final List<T> children = new CopyOnWriteArrayList<T>();
+    private final Set<T> children = Collections.newSetFromMap( new ConcurrentHashMap<T,Boolean>() );
     private final List<Runnable> callbacks = new LinkedList<Runnable>();
     private int pollingTime = 100;
     private final AtomicBoolean started = new AtomicBoolean();

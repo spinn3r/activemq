@@ -10,7 +10,7 @@
             enableStatistics="true"
             persistent="false"
             schedulerSupport="false"
-            useJmx="true"
+            useJmx="false"
             schedulePeriodForDestinationPurge="600000"
             dataDirectory="/tmp/artemis-embedded-broker">
 

@@ -17,7 +17,7 @@ import java.net.URI;
  */
 public class PurgeInactiveDestinationsPerformanceTest extends TestCase {
 
-    public static final int NR_QUEUES = 5000;
+    public static final int NR_QUEUES = 20000;
 
     public static final String BROKER_HOST = "127.0.0.1";
 
