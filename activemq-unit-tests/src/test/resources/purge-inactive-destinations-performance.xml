@@ -1,0 +1,105 @@
+
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <broker xmlns="http://activemq.apache.org/schema/core"
+            brokerName="localhost"
+            enableStatistics="true"
+            persistent="false"
+            schedulerSupport="false"
+            useJmx="false"
+            schedulePeriodForDestinationPurge="600000"
+            dataDirectory="/tmp/artemis-embedded-broker">
+
+        <destinationPolicy>
+            <policyMap>
+
+                <policyEntries>
+
+                    <!-- make the inactive timeout large..  we're going to
+                         manually trigger it so we can time what's happening -->
+                    <policyEntry queue=">"
+                                 prioritizedMessages="false"
+                                 useCache="false"
+                                 maxBrowsePageSize="2147483647"
+                                 producerFlowControl="true"
+                                 memoryLimit="15mb"
+                                 advisoryForDelivery="true"
+                                 advisoryForConsumed="true"
+                                 gcInactiveDestinations="true"
+                                 expireMessagesPeriod="0"
+                                 inactiveTimoutBeforeGC="1">
+
+                        <pendingMessageLimitStrategy>
+                            <constantPendingMessageLimitStrategy limit="1000"/>
+                        </pendingMessageLimitStrategy>
+
+                        <deadLetterStrategy>
+                            <sharedDeadLetterStrategy processNonPersistent="true" />
+                        </deadLetterStrategy>
+
+                    </policyEntry>
+
+                    <policyEntry topic="ActiveMQ.>"
+                                 prioritizedMessages="false"
+                                 useCache="false"
+                                 maxBrowsePageSize="2147483647"
+                                 expireMessagesPeriod="0">
+
+                    </policyEntry>
+
+                </policyEntries>
+
+            </policyMap>
+        </destinationPolicy>
+
+        <!--
+          The systemUsage controls the maximum amount of space the broker will
+          use before disabling caching and/or slowing down producers. For more information, see:
+          http://activemq.apache.org/producer-flow-control.html
+        -->
+        <systemUsage>
+            <systemUsage>
+                <memoryUsage>
+                    <memoryUsage limit="300 mb" />
+                </memoryUsage>
+                <storeUsage>
+                    <storeUsage limit="100 gb"/>
+                </storeUsage>
+                <tempUsage>
+                    <tempUsage limit="50 gb"/>
+                </tempUsage>
+            </systemUsage>
+        </systemUsage>
+
+        <!--
+            The transport connectors expose ActiveMQ over a given protocol to
+            clients and other brokers. For more information, see:
+
+            http://activemq.apache.org/configuring-transports.html
+        -->
+        <transportConnectors>
+            <transportConnector name="openwire" uri="tcp://0.0.0.0:16161?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+        </transportConnectors>
+
+        <plugins>
+
+            <!-- lets enable detailed logging in the broker but ignore ConnectionEvents -->
+            <!--<loggingBrokerPlugin logConsumerEvents="true" logProducerEvents="true" logTransactionEvents="true" />-->
+
+            <traceBrokerPathPlugin/>
+
+        </plugins>
+
+        <!-- destroy the spring context on shutdown to stop jetty -->
+        <shutdownHooks>
+            <bean xmlns="http://www.springframework.org/schema/beans" class="org.apache.activemq.hooks.SpringContextHook" />
+        </shutdownHooks>
+
+    </broker>
+
+</beans>
+

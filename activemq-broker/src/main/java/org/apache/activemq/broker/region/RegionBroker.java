@@ -834,7 +834,8 @@ public class RegionBroker extends EmptyBroker {
 
     protected void purgeInactiveDestinations() {
 
-        Logger log = LOG;
+        LogBatcher logBatcher = new LogBatcher( LOG );
+
         StopWatch purgeStopWatch = new StopWatch();
         subscriptionPurgeLock.writeLock().lock();
         int nrDestinationsPurged = 0;
@@ -862,18 +863,16 @@ public class RegionBroker extends EmptyBroker {
                 context.setBroker( this );
 
                 for (Destination dest : list) {
-                    if (dest instanceof BaseDestination) {
-                        log = ( (BaseDestination) dest ).getLog();
-                    }
-                    log.info("{} Inactive for longer than {} ms - removing ...", dest.getName(), dest.getInactiveTimoutBeforeGC());
+
+                    logBatcher.info("%s Inactive for longer than %s ms - removing ...", dest.getName(), dest.getInactiveTimoutBeforeGC());
                     try {
                         inactiveDestinationsPurgeLock.writeLock( dest.getActiveMQDestination() ).lock();
                         //(double check idiom) check that the destination can still be GCd
                         if (dest.canGC()) {
-                            log.info( "{} Inactive for longer than {} ms - removing ...", dest.getName(), dest.getInactiveTimoutBeforeGC() );
+                            logBatcher.info( "%s Inactive for longer than %s ms - removing ...", dest.getName(), dest.getInactiveTimoutBeforeGC());
                             StopWatch purgeDestinationStopWatch = new StopWatch();
                             getRoot().removeDestination( context, dest.getActiveMQDestination(), isAllowTempAutoCreationOnSend() ? 1 : 0 );
-                            log.info( "{} Inactive for longer than {} ms - removed in {} ms ...done", dest.getName(), dest.getInactiveTimoutBeforeGC(), purgeDestinationStopWatch.stop() );
+                            logBatcher.info( "%s Inactive for longer than %s ms - removed in %s ms ...done", dest.getName(), dest.getInactiveTimoutBeforeGC(), purgeDestinationStopWatch.stop());
                             ++nrDestinationsPurged;
                         }
                     } catch (Exception e) {
@@ -885,8 +884,10 @@ public class RegionBroker extends EmptyBroker {
             }
         } finally {
             subscriptionPurgeLock.writeLock().unlock();
-            if ( nrDestinationsPurged > 0 )
-                log.info( "Inactive destination purge took {} ms and purged {} destinations", purgeStopWatch.stop(), nrDestinationsPurged );
+            if (nrDestinationsPurged > 0) {
+                logBatcher.info( "Inactive destination purge took {} ms and purged {} destinations", purgeStopWatch.stop(), nrDestinationsPurged );
+            }
+            logBatcher.flush();
         }
     }
 
