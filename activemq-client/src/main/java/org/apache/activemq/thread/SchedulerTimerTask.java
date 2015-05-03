@@ -17,19 +17,35 @@
 package org.apache.activemq.thread;
 
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A TimeTask for a Runnable object
  *
  */
 public class SchedulerTimerTask extends TimerTask {
-    private final Runnable task;
+
+    private final AtomicReference<Runnable> task = new AtomicReference<Runnable>( null );
 
     public SchedulerTimerTask(Runnable task) {
-        this.task = task;
+        this.task.set( task );
     }
 
     public void run() {
-        this.task.run();                         
+
+        Runnable delegate = this.task.get();
+
+        if ( delegate != null ) {
+            delegate.run();
+        }
+
     }
+
+    /**
+     * Clear the reference to the runnable so it can be GCd
+     */
+    public void clear() {
+        this.task.set( null );
+    }
+
 }

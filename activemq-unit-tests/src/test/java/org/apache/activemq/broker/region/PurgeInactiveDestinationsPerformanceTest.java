@@ -30,6 +30,8 @@ public class PurgeInactiveDestinationsPerformanceTest extends TestCase {
     @Before
     public void setUp() throws Exception {
 
+        System.out.printf( "Loading from %s\n", getClass().getClassLoader() );
+
         // ****  Turn on stdout logging in log4j
         DOMConfigurator.configure( getClass().getResource( "/log4j-stdout.xml" ) );
 
