@@ -2,8 +2,7 @@
 <beans
         xmlns="http://www.springframework.org/schema/beans"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
     <broker xmlns="http://activemq.apache.org/schema/core"
             brokerName="localhost"
@@ -43,13 +42,13 @@
 
                     </policyEntry>
 
-                    <policyEntry topic="ActiveMQ.>"
-                                 prioritizedMessages="false"
-                                 useCache="false"
-                                 maxBrowsePageSize="2147483647"
-                                 expireMessagesPeriod="0">
+                    <!--<policyEntry topic="ActiveMQ.>"-->
+                                 <!--prioritizedMessages="false"-->
+                                 <!--useCache="false"-->
+                                 <!--maxBrowsePageSize="2147483647"-->
+                                 <!--expireMessagesPeriod="0">-->
 
-                    </policyEntry>
+                    <!--</policyEntry>-->
 
                 </policyEntries>
 
