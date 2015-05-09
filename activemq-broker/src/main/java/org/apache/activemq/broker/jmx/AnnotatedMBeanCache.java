@@ -7,10 +7,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- *
+ * A cache for Annotated MBean parameters, descriptions, etc.  In profiling,
+ * reflection turned to to be a hot spot and called far too often.  For example,
+ * with 20k queues, more than 8M reflected calls were performed which
+ * increase overhead by more than 200x.  This relaxes that constrained by
+ * computing a key for an operation, and then looking it up in a cache.
  */
 public class AnnotatedMBeanCache {
 
+    // keep hit and miss information.  This could be exported via JMX in the
+    // future but the primary reason is debug information on how well the cache
+    // is performing.  Keeping stat on hits and misses did not impose any
+    // significant overhead.
     private static AtomicLong hits = new AtomicLong( 0 );
     private static AtomicLong misses = new AtomicLong( 0 );
 

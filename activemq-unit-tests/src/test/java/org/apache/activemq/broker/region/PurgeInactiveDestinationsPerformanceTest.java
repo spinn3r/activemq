@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.broker.jmx.AnnotatedMBean;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.junit.After;
 import org.junit.Before;
@@ -64,6 +65,9 @@ public class PurgeInactiveDestinationsPerformanceTest extends TestCase {
         createQueues();
 
         //purgeInactiveDestinations();
+
+        System.out.printf( "hits: %s\n", AnnotatedMBean.annotatedMBeanCache.hits.get() );
+        System.out.printf( "misses: %s\n", AnnotatedMBean.annotatedMBeanCache.misses.get() );
 
     }
 
