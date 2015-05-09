@@ -7,9 +7,9 @@
     <broker xmlns="http://activemq.apache.org/schema/core"
             brokerName="localhost"
             enableStatistics="true"
-            persistent="true"
+            persistent="false"
             schedulerSupport="false"
-            useJmx="false"
+            useJmx="true"
             schedulePeriodForDestinationPurge="600000"
             dataDirectory="/tmp/artemis-embedded-broker">
 
@@ -74,9 +74,9 @@
             </systemUsage>
         </systemUsage>
 
-        <persistenceAdapter>
-            <levelDB directory="/tmp/leveldb" sync="false"/>
-        </persistenceAdapter>
+        <!--<persistenceAdapter>-->
+            <!--<levelDB directory="/tmp/leveldb" sync="false"/>-->
+        <!--</persistenceAdapter>-->
 
         <!--
             The transport connectors expose ActiveMQ over a given protocol to
