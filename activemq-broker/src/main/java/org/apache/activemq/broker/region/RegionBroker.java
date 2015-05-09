@@ -885,7 +885,7 @@ public class RegionBroker extends EmptyBroker {
         } finally {
             subscriptionPurgeLock.writeLock().unlock();
             if (nrDestinationsPurged > 0) {
-                logBatcher.info( "Inactive destination purge took {} ms and purged {} destinations", purgeStopWatch.stop(), nrDestinationsPurged );
+                logBatcher.info( "Inactive destination purge took %s ms and purged %s destinations", purgeStopWatch.stop(), nrDestinationsPurged );
             }
             logBatcher.flush();
         }
