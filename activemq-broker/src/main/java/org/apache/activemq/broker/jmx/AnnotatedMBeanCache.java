@@ -11,7 +11,9 @@ import java.util.concurrent.atomic.AtomicLong;
  * reflection turned to to be a hot spot and called far too often.  For example,
  * with 20k queues, more than 8M reflected calls were performed which
  * increase overhead by more than 200x.  This relaxes that constrained by
- * computing a key for an operation, and then looking it up in a cache.
+ * computing a key for an operation, and then looking it up in a cache.  The
+ * memory overhead for the cache at this point was only 200 items.  So a clear
+ * space/time tradeoff.
  */
 public class AnnotatedMBeanCache {
 
@@ -45,6 +47,10 @@ public class AnnotatedMBeanCache {
 
     public boolean containsKey(String key) {
         return cache.containsKey(key);
+    }
+
+    public int size() {
+        return cache.size();
     }
 
     public String computeCacheKey(AnnotatedMBean annotatedMBean, MBeanOperationInfo op, MBeanParameterInfo param, int paramNo) {

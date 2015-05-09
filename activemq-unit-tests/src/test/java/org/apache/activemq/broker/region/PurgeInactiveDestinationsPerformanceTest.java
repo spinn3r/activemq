@@ -18,7 +18,7 @@ import java.net.URI;
  */
 public class PurgeInactiveDestinationsPerformanceTest extends TestCase {
 
-    public static final int NR_QUEUES = 20000;
+    public static final int NR_QUEUES = 15000;
 
     public static final int NR_MESSAGES_PER_QUEUE = 1;
 
@@ -37,6 +37,8 @@ public class PurgeInactiveDestinationsPerformanceTest extends TestCase {
     // - test with 1 queue and 20k messages to see if the createQueues time is the same.
     //          - definitely faster.. about 20x faster.
     // - test with leveldb to see what the overhead looks like.
+    // - (done) make sure the size of the cache is reasonable
+    // - how much memory is wasted in JMX vs no-JMX
 
     @Before
     public void setUp() throws Exception {
@@ -66,8 +68,9 @@ public class PurgeInactiveDestinationsPerformanceTest extends TestCase {
 
         //purgeInactiveDestinations();
 
-        System.out.printf( "hits: %s\n", AnnotatedMBean.annotatedMBeanCache.hits.get() );
-        System.out.printf( "misses: %s\n", AnnotatedMBean.annotatedMBeanCache.misses.get() );
+        //System.out.printf( "hits: %s\n", AnnotatedMBean.annotatedMBeanCache.hits.get() );
+        //System.out.printf( "misses: %s\n", AnnotatedMBean.annotatedMBeanCache.misses.get() );
+        //System.out.printf( "cache size: %s\n", AnnotatedMBean.annotatedMBeanCache.size() );
 
     }
 
