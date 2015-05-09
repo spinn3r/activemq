@@ -22,6 +22,7 @@ import java.security.AccessController;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanException;
@@ -50,6 +51,8 @@ public class AnnotatedMBean extends StandardMBean {
 
     private static boolean audit;
     private static AuditLogService auditLog;
+
+    private static AnnotatedMBeanCache annotatedMBeanCache = new AnnotatedMBeanCache();
 
     static {
         Class<?>[] p = { byte.class, short.class, int.class, long.class, float.class, double.class, char.class, boolean.class, };
@@ -84,25 +87,36 @@ public class AnnotatedMBean extends StandardMBean {
 
     /** Instance where the MBean interface is implemented by this object. */
     protected AnnotatedMBean(Class<?> mbeanInterface) throws NotCompliantMBeanException {
-        super(mbeanInterface);
+        super( mbeanInterface );
     }
 
     /** {@inheritDoc} */
     @Override
     protected String getDescription(MBeanAttributeInfo info) {
 
+        String cacheKey = annotatedMBeanCache.computeCacheKey(this,info);
+
+        if ( annotatedMBeanCache.containsKey(cacheKey)) {
+            return annotatedMBeanCache.get(cacheKey);
+        }
+
         String descr = info.getDescription();
-        Method m = getMethod(getMBeanInterface(), "get" + info.getName().substring(0, 1).toUpperCase() + info.getName().substring(1));
+        String suffix = info.getName().substring( 0, 1 ).toUpperCase() + info.getName().substring( 1 );
+        Method m = getMethod(getMBeanInterface(), "get" + suffix );
         if (m == null)
-            m = getMethod(getMBeanInterface(), "is" + info.getName().substring(0, 1).toUpperCase() + info.getName().substring(1));
+            m = getMethod(getMBeanInterface(), "is" + suffix);
         if (m == null)
-            m = getMethod(getMBeanInterface(), "does" + info.getName().substring(0, 1).toUpperCase() + info.getName().substring(1));
+            m = getMethod(getMBeanInterface(), "does" + suffix);
 
         if (m != null) {
+
             MBeanInfo d = m.getAnnotation(MBeanInfo.class);
             if (d != null)
                 descr = d.value();
+
         }
+
+        annotatedMBeanCache.update( cacheKey, descr );
         return descr;
     }
 
@@ -110,19 +124,35 @@ public class AnnotatedMBean extends StandardMBean {
     @Override
     protected String getDescription(MBeanOperationInfo op) {
 
+        String cacheKey = annotatedMBeanCache.computeCacheKey(this,op);
+
+        if ( annotatedMBeanCache.containsKey(cacheKey)) {
+            return annotatedMBeanCache.get(cacheKey);
+        }
+
         String descr = op.getDescription();
         Method m = getMethod(op);
         if (m != null) {
+
             MBeanInfo d = m.getAnnotation(MBeanInfo.class);
             if (d != null)
                 descr = d.value();
+
         }
+        annotatedMBeanCache.update( cacheKey, descr );
         return descr;
     }
 
     /** {@inheritDoc} */
     @Override
     protected String getParameterName(MBeanOperationInfo op, MBeanParameterInfo param, int paramNo) {
+
+        String cacheKey = annotatedMBeanCache.computeCacheKey(this,op,param,paramNo);
+
+        if ( annotatedMBeanCache.containsKey(cacheKey)) {
+            return annotatedMBeanCache.get(cacheKey);
+        }
+
         String name = param.getName();
         Method m = getMethod(op);
         if (m != null) {
@@ -131,6 +161,7 @@ public class AnnotatedMBean extends StandardMBean {
                     name = MBeanInfo.class.cast(a).value();
             }
         }
+        annotatedMBeanCache.update( cacheKey, name );
         return name;
     }
 
