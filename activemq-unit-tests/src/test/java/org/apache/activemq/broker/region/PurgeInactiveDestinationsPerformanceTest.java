@@ -19,6 +19,8 @@ public class PurgeInactiveDestinationsPerformanceTest extends TestCase {
 
     public static final int NR_QUEUES = 20000;
 
+    public static final int NR_MESSAGES_PER_QUEUE = 1;
+
     public static final String BROKER_HOST = "127.0.0.1";
 
     public static final int BROKER_PORT = 16161;
@@ -26,6 +28,14 @@ public class PurgeInactiveDestinationsPerformanceTest extends TestCase {
     protected static String brokerURL = String.format( "tcp://%s:%s", BROKER_HOST, BROKER_PORT );
 
     protected BrokerService broker;
+
+    // TODO:
+    //
+    // - test creating queues without JMX (25s)
+    // - test creating queues with JMX (easily 20x slower and lots more GC issues)
+    // - test with 1 queue and 20k messages to see if the createQueues time is the same.
+    //          - definitely faster.. about 20x faster.
+    // - test with leveldb to see what the overhead looks like.
 
     @Before
     public void setUp() throws Exception {
@@ -50,8 +60,14 @@ public class PurgeInactiveDestinationsPerformanceTest extends TestCase {
 
     public void test1() throws Exception {
 
+        // create queue overhead may be the same as message overhead.
         createQueues();
 
+        //purgeInactiveDestinations();
+
+    }
+
+    private void purgeInactiveDestinations() {
         RegionBroker regionBroker = (RegionBroker)broker.getRegionBroker();
 
         Stopwatch stopwatch = new Stopwatch();
@@ -63,7 +79,6 @@ public class PurgeInactiveDestinationsPerformanceTest extends TestCase {
 
         System.out.printf( "=============\n" );
         System.out.printf( "Purged inactive destinations in : %s\n", stopwatch.stop() );
-
     }
 
     private void createQueues() throws Exception {
@@ -79,7 +94,7 @@ public class PurgeInactiveDestinationsPerformanceTest extends TestCase {
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.start();
 
-        for (int i = 0; i < NR_QUEUES; i++) {
+        for (int i = 1; i <= NR_QUEUES; i++) {
 
             String queueName = "test-" + i;
 
@@ -87,21 +102,32 @@ public class PurgeInactiveDestinationsPerformanceTest extends TestCase {
 
             MessageProducer producer = session.createProducer( dest );
             producer.setDeliveryMode( DeliveryMode.NON_PERSISTENT );
-
-            javax.jms.Message message = session.createTextMessage( "xx" );
-            producer.send( message );
-
-            // now receive the message we just produced so the queue has an empty size.
             MessageConsumer consumer = session.createConsumer( dest );
-            consumer.receive();
+
+            for (int j = 1; j <= NR_MESSAGES_PER_QUEUE; j++) {
+
+                javax.jms.Message message = session.createTextMessage( "xx" );
+                producer.send( message );
+
+                // now receive the message we just produced so the queue has an empty size.
+                consumer.receive();
+
+                if ( (j % 100) == 0 ) {
+                    System.out.printf( "[%s]", j );
+                }
+
+            }
 
             producer.close();
             consumer.close();
 
-            System.out.printf( "." );
+            if ( (i % 100) == 0 ) {
+                System.out.printf( "%s. ", i );
+            }
 
         }
 
+        System.out.printf( "\n" );
         System.out.printf( "Creating queues...done (%s)\n", stopwatch.stop() );
 
     }
