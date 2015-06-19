@@ -211,13 +211,13 @@
   </mailingLists>
 
   <distributionManagement>
-    <site>
-      <!-- this needs to match a server in your settings.xml with upload settings -->
-      <id>activemq-website</id>
-      <!-- set the staging.siteURL in your ~/.m2/settings.xml in a release or other profile -->
-      <url>${staging.siteURL}/maven/${project.version}</url>
-      <!--<url>${site-repo-url}</url>-->
-    </site>
+    <!--<site>-->
+      <!--&lt;!&ndash; this needs to match a server in your settings.xml with upload settings &ndash;&gt;-->
+      <!--<id>activemq-website</id>-->
+      <!--&lt;!&ndash; set the staging.siteURL in your ~/.m2/settings.xml in a release or other profile &ndash;&gt;-->
+      <!--<url>${staging.siteURL}/maven/${project.version}</url>-->
+      <!--&lt;!&ndash;<url>${site-repo-url}</url>&ndash;&gt;-->
+    <!--</site>-->
     <!--<snapshotRepository>-->
       <!--<id>apache.snapshots.https</id>-->
       <!--<name>Apache Development Snapshot Repository</name>-->
@@ -225,6 +225,10 @@
       <!--<uniqueVersion>false</uniqueVersion>-->
     <!--</snapshotRepository>-->
 
+    <snapshotRepository>
+      <id>ssh-repository</id>
+      <url>sftp://util0017.wdc.sl.spinn3r.com/var/www/maven-repo/public</url>
+    </snapshotRepository>
 
     <repository>
       <id>ssh-repository</id>
@@ -1104,6 +1108,22 @@
   </dependencyManagement>
 
   <build>
+
+    <extensions>
+
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ssh</artifactId>
+        <version>2.8</version>
+      </extension>
+
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ssh-external</artifactId>
+        <version>2.8</version>
+      </extension>
+    </extensions>
+
     <defaultGoal>test</defaultGoal>
     <pluginManagement>
       <plugins>
