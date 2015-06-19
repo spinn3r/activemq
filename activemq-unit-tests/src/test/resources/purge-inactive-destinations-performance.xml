@@ -7,7 +7,7 @@
     <broker xmlns="http://activemq.apache.org/schema/core"
             brokerName="localhost"
             enableStatistics="true"
-            persistent="false"
+            persistent="true"
             schedulerSupport="false"
             useJmx="true"
             schedulePeriodForDestinationPurge="600000"
@@ -83,6 +83,10 @@
         <transportConnectors>
             <transportConnector name="openwire" uri="tcp://0.0.0.0:16161?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
         </transportConnectors>
+
+        <persistenceAdapter>
+            <levelDB directory="/tmp/leveldb" sync="false"/>
+        </persistenceAdapter>
 
         <plugins>
 

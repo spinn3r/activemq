@@ -36,9 +36,13 @@ public class PurgeInactiveDestinationsPerformanceTest extends TestCase {
     // - test creating queues with JMX (easily 20x slower and lots more GC issues)
     // - test with 1 queue and 20k messages to see if the createQueues time is the same.
     //          - definitely faster.. about 20x faster.
-    // - test with leveldb to see what the overhead looks like.
     // - (done) make sure the size of the cache is reasonable
-    // - how much memory is wasted in JMX vs no-JMX
+    // - (done) how much memory is wasted in JMX vs no-JMX
+    //
+    //  - the memory overhead seems reasonable.. 75k per queue.  It just adds
+    //    up when we have lots of queues.
+
+    // - test with leveldb to see what the overhead looks like.
 
     @Before
     public void setUp() throws Exception {
@@ -133,6 +137,9 @@ public class PurgeInactiveDestinationsPerformanceTest extends TestCase {
             }
 
         }
+
+        session.close();
+        connection.close();
 
         System.out.printf( "\n" );
         System.out.printf( "Creating queues...done (%s)\n", stopwatch.stop() );
